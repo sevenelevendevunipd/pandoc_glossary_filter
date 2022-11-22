@@ -1,6 +1,6 @@
 import pathlib
 from dataclasses import dataclass, field
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Dict
 
 import yaml
 from loguru import logger
@@ -42,9 +42,9 @@ class Data:
     Class used for internal state storage
     """
 
-    glossary_data: dict[str, GlossaryEntry] = field(default_factory=dict)
+    glossary_data: Dict[str, GlossaryEntry] = field(default_factory=dict)
     glossary_dirty: bool = False
-    acronym_data: dict[str, AcronymEntry] = field(default_factory=dict)
+    acronym_data: Dict[str, AcronymEntry] = field(default_factory=dict)
     acronym_dirty: bool = False
 
 
