@@ -1,6 +1,6 @@
 import pathlib
 from dataclasses import dataclass, field
-from typing import Iterable, Optional, Dict
+from typing import Iterable, Optional, Dict, Tuple
 
 import yaml
 from loguru import logger
@@ -114,11 +114,11 @@ def get_glossary_entry(label: str) -> Optional[GlossaryEntry]:
     return __DATA.glossary_data.get(label, None)
 
 
-def get_glossary_entries() -> Iterable[tuple[str, GlossaryEntry]]:
+def get_glossary_entries() -> Iterable[Tuple[str, GlossaryEntry]]:
     """Gets all the registered glossary entries
 
     Returns:
-        Iterable[tuple[str, GlossaryEntry]]: entries
+        Iterable[Tuple[str, GlossaryEntry]]: entries
     """
     return __DATA.glossary_data.items()
 
@@ -146,10 +146,10 @@ def get_acronym_entry(label: str) -> Optional[AcronymEntry]:
     return __DATA.acronym_data.get(label, None)
 
 
-def get_acronym_entries() -> Iterable[tuple[str, AcronymEntry]]:
+def get_acronym_entries() -> Iterable[Tuple[str, AcronymEntry]]:
     """Gets all the registered acronym entries
 
     Returns:
-        Iterable[tuple[str, AcronymEntry]]: entries
+        Iterable[Tuple[str, AcronymEntry]]: entries
     """
     return __DATA.acronym_data.items()
