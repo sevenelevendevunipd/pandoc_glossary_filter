@@ -1,5 +1,7 @@
 import re
 
+from typing import Optional
+
 from panflute import Doc, Element, MetaMap, RawInline, Str
 
 from .data import (
@@ -23,17 +25,15 @@ acronym_cmds = {
 }
 
 
-def glossary(elem: Element, doc: Doc):
+def glossary(elem: Element, doc: Doc) -> Optional[Element]:
     """Pandoc filter that does all the magic :D
 
     Args:
-        key (str): Pandoc element type
-        value (str): Pandoc element content
-        format_ (str): Output file format
-        meta (dict): File metadata
+        elem (Element): Pandoc element
+        doc (Doc): Pandoc document
 
     Returns:
-        _type_: Pandoc element iff the current element is a glossary entry or an acronym
+        Optional[Element]: Pandoc element iff the current element is a glossary entry or an acronym
     """
     if doc.format not in {"latex", "json"} or not isinstance(elem, Str):
         return None

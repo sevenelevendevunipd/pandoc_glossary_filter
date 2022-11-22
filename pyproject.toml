@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pandoc-glossary-filter"
-version = "0.2.1"
+version = "0.2.2"
 description = "Pandoc filter used to generate a glossary and an acronym list common to a set of documents"
 authors = ["Augusto Zanellato <augusto.zanellato@gmail.com>"]
 readme = "README.md"
