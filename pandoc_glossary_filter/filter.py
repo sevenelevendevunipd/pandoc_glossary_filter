@@ -1,14 +1,14 @@
 import re
 
-from pandocfilters import RawInline
+from panflute import Doc, Element, MetaMap, RawInline, Str
 
 from .data import (
     AcronymEntry,
     GlossaryEntry,
-    get_glossary_entry,
-    set_glossary_entry,
     get_acronym_entry,
+    get_glossary_entry,
     set_acronym_entry,
+    set_glossary_entry,
 )
 
 filter_cmd_re = re.compile(r"{(\w+):(\w+)}")
@@ -23,7 +23,7 @@ acronym_cmds = {
 }
 
 
-def glossary(key: str, value: str, format_: str, meta: dict):
+def glossary(elem: Element, doc: Doc):
     """Pandoc filter that does all the magic :D
 
     Args:
@@ -35,8 +35,10 @@ def glossary(key: str, value: str, format_: str, meta: dict):
     Returns:
         _type_: Pandoc element iff the current element is a glossary entry or an acronym
     """
-    if format_ not in {"latex", "json"} or key != "Str":
+    if doc.format not in {"latex", "json"} or not isinstance(elem, Str):
         return None
+
+    value: str = elem.text
     match = filter_cmd_re.search(value)
     if match is None:
         return None
@@ -47,42 +49,41 @@ def glossary(key: str, value: str, format_: str, meta: dict):
         return None
     cmd = (glossary_cmds if is_glossary else acronym_cmds)[cmd]
     label: str = match.groups()[1]
-    meta["has-glossary"] = {"t": "MetaBool", "c": True}
+
+    doc.metadata["has-glossary"] = True
     if is_glossary:
-        if "glossary-entries" not in meta:
-            meta["glossary-entries"] = {"t": "MetaMap", "c": {}}
+        if "glossary-entries" not in doc.metadata:
+            doc.metadata["glossary-entries"] = {}
         entry = get_glossary_entry(label)
         if entry is None:
             entry = GlossaryEntry("", "")
             set_glossary_entry(label, entry)
-        if label not in meta["glossary-entries"]["c"]:
+
+        glossary_entries: MetaMap = doc.metadata["glossary-entries"]  # type: ignore
+        if label not in glossary_entries:
             entry = get_glossary_entry(label)
             assert entry is not None
-            meta["glossary-entries"]["c"][label] = {
-                "t": "MetaMap",
-                "c": {
-                    "name": {"t": "MetaString", "c": entry.name},
-                    "description": {"t": "MetaString", "c": entry.description},
-                },
+            latex_entry = {
+                "name": entry.name,
+                "description": entry.description,
             }
             if entry.plural:
-                meta["glossary-entries"]["c"][label]["c"]["plural"] = {"t": "MetaString", "c": entry.plural}
+                latex_entry["plural"] = entry.plural
+            glossary_entries[label] = latex_entry
     else:
-        if "acronym-entries" not in meta:
-            meta["acronym-entries"] = {"t": "MetaMap", "c": {}}
+        if "acronym-entries" not in doc.metadata:
+            doc.metadata["acronym-entries"] = {}
         entry = get_acronym_entry(label)
         if entry is None:
             entry = AcronymEntry("", "")
             set_acronym_entry(label, entry)
-        if label not in meta["acronym-entries"]["c"]:
-            meta["acronym-entries"]["c"][label] = {
-                "t": "MetaMap",
-                "c": {
-                    "name": {"t": "MetaString", "c": entry.name},
-                    "description": {"t": "MetaString", "c": entry.description},
-                },
+        acronym_entries: MetaMap = doc.metadata["acronym-entries"]  # type: ignore
+        if label not in acronym_entries:
+            acronym_entries[label] = {
+                "name": entry.name,
+                "description": entry.description,
             }
 
     return RawInline(
-        "latex", filter_cmd_re.sub(f"\\\\{cmd}{{{label}}}" + ("{$_A$}" if is_acronym else "{$_G$}"), value)
+        filter_cmd_re.sub(f"\\\\{cmd}{{{label}}}" + ("{$_A$}" if is_acronym else "{$_G$}"), value), "latex"
     )

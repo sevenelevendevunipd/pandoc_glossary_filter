@@ -1,11 +1,11 @@
 import sys
 
 from loguru import logger
-from pandocfilters import toJSONFilter
+from panflute import toJSONFilter
 
 from pandoc_glossary_filter.filter import glossary
 
-from .data import get_glossary_entries, load_data, save_data, get_acronym_entries
+from .data import get_acronym_entries, get_glossary_entries, load_data, save_data
 
 
 def main():
