@@ -1,7 +1,7 @@
 import sys
 
+import panflute
 from loguru import logger
-from panflute import toJSONFilter
 
 from pandoc_glossary_filter.filter import glossary
 
@@ -11,7 +11,15 @@ from .data import get_acronym_entries, get_glossary_entries, load_data, save_dat
 def main():
     """Main"""
     load_data()
-    toJSONFilter(glossary)
+    doc = panflute.load()
+    if doc.metadata["full-glossary"]:
+        for label, entry in get_acronym_entries():
+            entry.add_to_doc(label, doc)
+        for label, entry in get_glossary_entries():
+            entry.add_to_doc(label, doc)
+    else:
+        doc.walk(glossary)
+    panflute.dump(doc)
     save_data()
     incomplete_data: bool = False
     for label, entry in get_glossary_entries():

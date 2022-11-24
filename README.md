@@ -15,5 +15,4 @@
 
 ## TODO
 
-- Add support for a full glossary document containing all the defined entries
 - Actually usable documentation

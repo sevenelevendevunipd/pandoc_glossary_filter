@@ -1,9 +1,10 @@
 import pathlib
 from dataclasses import dataclass, field
-from typing import Iterable, Optional, Dict, Tuple
+from typing import Dict, Iterable, Optional, Tuple
 
 import yaml
 from loguru import logger
+from panflute import Doc
 
 
 @dataclass
@@ -21,6 +22,18 @@ class GlossaryEntry:
     description: str
     plural: Optional[str] = None
 
+    def add_to_doc(self, label: str, doc: Doc):
+        doc.metadata["has-glossary"] = True
+        if "glossary-entries" not in doc.metadata:
+            doc.metadata["glossary-entries"] = {}
+        latex_entry = {
+            "name": self.name,
+            "description": self.description,
+        }
+        if self.plural:
+            latex_entry["plural"] = self.plural
+        doc.metadata["glossary-entries"][label] = latex_entry  # type: ignore
+
 
 @dataclass
 class AcronymEntry:
@@ -35,6 +48,18 @@ class AcronymEntry:
     name: str
     long: str
     description: Optional[str] = None
+
+    def add_to_doc(self, label: str, doc: Doc):
+        doc.metadata["has-glossary"] = True
+        if "acronym-entries" not in doc.metadata:
+            doc.metadata["acronym-entries"] = {}
+        latex_entry = {
+            "name": self.name,
+            "long": self.long,
+        }
+        if self.description:
+            latex_entry["description"] = self.description
+        doc.metadata["acronym-entries"][label] = latex_entry  # type: ignore
 
 
 @dataclass
