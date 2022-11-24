@@ -13,6 +13,9 @@ def main():
     load_data()
     doc = panflute.load()
     if "full-glossary" in doc.metadata and doc.metadata["full-glossary"]:
+        doc.metadata["has-glossary"] = True
+        doc.metadata["acronym-entries"] = {}
+        doc.metadata["glossary-entries"] = {}
         for label, entry in get_acronym_entries():
             entry.add_to_doc(label, doc)
         for label, entry in get_glossary_entries():

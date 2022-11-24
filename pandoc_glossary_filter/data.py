@@ -23,9 +23,6 @@ class GlossaryEntry:
     plural: Optional[str] = None
 
     def add_to_doc(self, label: str, doc: Doc):
-        doc.metadata["has-glossary"] = True
-        if "glossary-entries" not in doc.metadata:
-            doc.metadata["glossary-entries"] = {}
         latex_entry = {
             "name": self.name,
             "description": self.description,
@@ -50,9 +47,6 @@ class AcronymEntry:
     description: Optional[str] = None
 
     def add_to_doc(self, label: str, doc: Doc):
-        doc.metadata["has-glossary"] = True
-        if "acronym-entries" not in doc.metadata:
-            doc.metadata["acronym-entries"] = {}
         latex_entry = {
             "name": self.name,
             "long": self.long,

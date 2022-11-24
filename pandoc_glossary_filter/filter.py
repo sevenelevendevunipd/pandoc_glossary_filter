@@ -49,7 +49,10 @@ def glossary(elem: Element, doc: Doc) -> Optional[Element]:
     cmd = (glossary_cmds if is_glossary else acronym_cmds)[cmd]
     label: str = match.groups()[1]
 
-    doc.metadata["has-glossary"] = True
+    if "has-glossary" not in doc.metadata:
+        doc.metadata["has-glossary"] = True
+        doc.metadata["acronym-entries"] = {}
+        doc.metadata["glossary-entries"] = {}
     if is_glossary:
         entry = get_glossary_entry(label)
         if entry is None:
