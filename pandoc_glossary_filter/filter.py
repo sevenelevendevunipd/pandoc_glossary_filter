@@ -79,10 +79,13 @@ def glossary(elem: Element, doc: Doc) -> Optional[Element]:
             set_acronym_entry(label, entry)
         acronym_entries: MetaMap = doc.metadata["acronym-entries"]  # type: ignore
         if label not in acronym_entries:
-            acronym_entries[label] = {
+            latex_entry = {
                 "name": entry.name,
-                "description": entry.description,
+                "long": entry.long,
             }
+            if entry.description:
+                latex_entry["description"] = entry.description
+            acronym_entries[label] = latex_entry
 
     return RawInline(
         filter_cmd_re.sub(f"\\\\{cmd}{{{label}}}" + ("{$_A$}" if is_acronym else "{$_G$}"), value), "latex"

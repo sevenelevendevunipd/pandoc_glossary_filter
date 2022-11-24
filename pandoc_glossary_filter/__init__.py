@@ -22,9 +22,9 @@ def main():
             incomplete_data = True
             logger.error(f"Empty name for glossary label {label}")
     for label, entry in get_acronym_entries():
-        if not entry.description:
+        if not entry.long:
             incomplete_data = True
-            logger.error(f"Empty description for acronym label {label}")
+            logger.error(f"Empty long form for acronym label {label}")
         if not entry.name:
             incomplete_data = True
             logger.error(f"Empty name for acronym label {label}")

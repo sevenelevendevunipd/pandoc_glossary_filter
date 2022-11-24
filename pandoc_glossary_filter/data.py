@@ -33,7 +33,8 @@ class AcronymEntry:
     """
 
     name: str
-    description: str
+    long: str
+    description: Optional[str] = None
 
 
 @dataclass
